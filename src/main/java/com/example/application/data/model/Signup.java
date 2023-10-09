@@ -4,8 +4,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.dom4j.tree.AbstractEntity;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 
+@Entity
+@Table(name = "users")
 public class Signup extends AbstractEntity {
 
     @NotEmpty

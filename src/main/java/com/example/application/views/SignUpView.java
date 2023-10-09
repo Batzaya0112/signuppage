@@ -1,6 +1,7 @@
 package com.example.application.views;
 
 import com.example.application.data.model.Signup;
+import com.example.application.data.repository.SignUpRepository;
 import com.example.application.data.service.SignupService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -11,18 +12,21 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.BeanValidationBinder;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @PageTitle("Sign Up")
 @Route(value = "sing up", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 public class SignUpView extends VerticalLayout {
-    Binder<Signup> binder = new BeanValidationBinder<>(Signup.class);
-    private final SignupService signupService;
+    Logger logger = Logger.getLogger(SignUpView.class.getName());
+    //Binder<Signup> binder = new BeanValidationBinder<>(Signup.class);
+    private SignupService signupService;
+    private SignUpRepository signUpRepository;
     private Signup signup;
     TextField firstName = new TextField("First Name");
     TextField lastName = new TextField("Last Name");
@@ -30,14 +34,11 @@ public class SignUpView extends VerticalLayout {
     EmailField email = new EmailField("Email");
     PasswordField newPassword = new PasswordField("Password");
     PasswordField confirmPassword = new PasswordField("Confirm password");
-
     Button signUpBtn = new Button("Sign Up");
     public SignUpView(SignupService signupService) {
-        //addClassName("login-view");
-        //setSpacing(false);
-        //setAlignItems(Alignment.CENTER);
-        //setSizeFull();
+
         this.signupService = signupService;
+        this.signup = new Signup();
         FormLayout formLayout = new FormLayout();
 
         formLayout.add(createNameLayout(),
@@ -47,8 +48,15 @@ public class SignUpView extends VerticalLayout {
             createButtonsLayout()
         );
 
-        this.signup = new Signup();
-        signUpBtn.addClickListener(event -> signupService.saveSignUp(this.signup));
+        signUpBtn.addClickListener( event -> {
+            logger.log(Level.INFO, "signup button =========>" + firstName.getValue());
+            this.signup.setFirstName(firstName.getValue());
+            this.signup.setLastName(lastName.getValue());
+            this.signup.setUserName(userName.getValue());
+            this.signup.setEmail(email.getValue());
+            this.signup.setPassword(confirmPassword.getValue());
+            signupService.saveSignUp(this.signup);
+        });
 
         formLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
@@ -72,34 +80,8 @@ public class SignUpView extends VerticalLayout {
     private Component createPasswordLayout(){
         return new HorizontalLayout(newPassword, confirmPassword);
     }
+    private  boolean passwordCheck(){
+        return this.newPassword.getValue() == this.confirmPassword.getValue();
+    }
 
-
-//    private void signUpSave(){
-//        if(binder.isValid()){
-//            fireEvent(new SaveEvent(this, binder.getBean()));
-//        }
-//    }
-
-//    public static abstract class SignUpFormEvent extends ComponentEvent<SignUpView> {
-//        private Signup signup;
-//
-//        protected SignUpFormEvent(SignUpView source, Signup signup) {
-//            super(source, false);
-//            this.signup = signup;
-//        }
-//
-//        public Signup getSignup() {
-//            return signup;
-//        }
-//    }
-
-//    public static class SaveEvent extends SignUpFormEvent {
-//        SaveEvent(SignUpView source, Signup signup) {
-//            super(source, signup);
-//        }
-//    }
-//
-//    public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
-//        return addListener(SaveEvent.class, listener);
-//    }
 }
