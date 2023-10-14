@@ -15,11 +15,8 @@ public class SignupService {
     @Autowired
     private SignUpRepository signUpRepository;
 
-//    public SignupService(SignUpRepository signUpRepository){
-//        this.signUpRepository = signUpRepository;
-//    }
-
     public Signup saveSignUp(Signup signup){
+
         if(signup == null){
             System.err.println("SignUp is null.");
             logger.log(Level.INFO, "signup null =========> SignUp is null. " + signup.getFirstName());
@@ -27,8 +24,9 @@ public class SignupService {
             logger.log(Level.INFO, "signup not null =========> SignUp is not null. " + signup.getFirstName());
             logger.log(Level.INFO, "signup not null =========> SignUp is not null. " + signup.getLastName());
             logger.log(Level.INFO, "signup not null =========> SignUp is not null. " + signup.getEmail());
+            return signUpRepository.save(signup);
         }
-        return signUpRepository.save(signup);
+        return null;
     }
 
 }

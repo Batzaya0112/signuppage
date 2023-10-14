@@ -1,7 +1,6 @@
 package com.example.application.views;
 
 import com.example.application.data.model.Signup;
-import com.example.application.data.repository.SignUpRepository;
 import com.example.application.data.service.SignupService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -15,8 +14,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import jakarta.validation.constraints.NotEmpty;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @PageTitle("Sign Up")
@@ -24,21 +23,23 @@ import java.util.logging.Logger;
 @RouteAlias(value = "", layout = MainLayout.class)
 public class SignUpView extends VerticalLayout {
     Logger logger = Logger.getLogger(SignUpView.class.getName());
-    //Binder<Signup> binder = new BeanValidationBinder<>(Signup.class);
     private SignupService signupService;
-    private SignUpRepository signUpRepository;
-    private Signup signup;
+    @NotEmpty
     TextField firstName = new TextField("First Name");
+    @NotEmpty
     TextField lastName = new TextField("Last Name");
+    @NotEmpty
     TextField userName = new TextField("Username");
+    @NotEmpty
     EmailField email = new EmailField("Email");
+    @NotEmpty
     PasswordField newPassword = new PasswordField("Password");
+    @NotEmpty
     PasswordField confirmPassword = new PasswordField("Confirm password");
     Button signUpBtn = new Button("Sign Up");
     public SignUpView(SignupService signupService) {
 
         this.signupService = signupService;
-        this.signup = new Signup();
         FormLayout formLayout = new FormLayout();
 
         formLayout.add(createNameLayout(),
@@ -49,13 +50,13 @@ public class SignUpView extends VerticalLayout {
         );
 
         signUpBtn.addClickListener( event -> {
-            logger.log(Level.INFO, "signup button =========>" + firstName.getValue());
-            this.signup.setFirstName(firstName.getValue());
-            this.signup.setLastName(lastName.getValue());
-            this.signup.setUserName(userName.getValue());
-            this.signup.setEmail(email.getValue());
-            this.signup.setPassword(confirmPassword.getValue());
-            signupService.saveSignUp(this.signup);
+            final Signup signup = new Signup();
+            signup.setFirstName(firstName.getValue());
+            signup.setLastName(lastName.getValue());
+            signup.setUserName(userName.getValue());
+            signup.setEmail(email.getValue());
+            signup.setPassword(confirmPassword.getValue());
+            signupService.saveSignUp(signup);
         });
 
         formLayout.setResponsiveSteps(
@@ -69,7 +70,6 @@ public class SignUpView extends VerticalLayout {
 
     private Button createButtonsLayout(){
         signUpBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        //signUpBtn.addClickListener(event -> signUpSave());
         return signUpBtn;
     }
     private Component createNameLayout(){

@@ -1,32 +1,37 @@
 package com.example.application.data.model;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import org.dom4j.tree.AbstractEntity;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "users")
-public class Signup extends AbstractEntity {
+@Table(name = "userssignup")
+public class Signup{
 
-    @NotEmpty
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @Column(nullable=false)
     private String firstName = "";
-    @NotEmpty
+    @Column(nullable=false)
     private String lastName = "";
-
-    @NotEmpty
+    @Column(nullable=false)
     private String username = "";
-    @NotEmpty
-    @Email
+    @Column(nullable=false)
     private String email = "";
-
-    @NotEmpty
+    @Column(nullable=false)
     private String password = "";
 
-    @Override
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
     public String toString() {
         return firstName + " " + lastName;
     }
