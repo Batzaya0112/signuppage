@@ -1,30 +1,30 @@
 package com.example.application.data.service;
 
-import com.example.application.data.model.Signup;
-import com.example.application.data.repository.SignUpRepository;
+import com.example.application.data.model.User;
+import com.example.application.data.repository.UserRepository;
 import com.example.application.views.SignUpView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
 public class SignupService {
     Logger logger = Logger.getLogger(SignUpView.class.getName());
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Autowired
-    private SignUpRepository signUpRepository;
+    private UserRepository userRepository;
 
-    public Signup saveSignUp(Signup signup){
+    public User saveSignUp(User signup){
 
         if(signup == null){
             System.err.println("SignUp is null.");
-            logger.log(Level.INFO, "signup null =========> SignUp is null. " + signup.getFirstName());
         }else {
-            logger.log(Level.INFO, "signup not null =========> SignUp is not null. " + signup.getFirstName());
-            logger.log(Level.INFO, "signup not null =========> SignUp is not null. " + signup.getLastName());
-            logger.log(Level.INFO, "signup not null =========> SignUp is not null. " + signup.getEmail());
-            return signUpRepository.save(signup);
+            String hashedPassword = passwordEncoder.encode(signup.getPassword());
+            System.out.println("Plain Password: " + hashedPassword);
+            signup.setPassword(hashedPassword);
+            return userRepository.save(signup);
         }
         return null;
     }
