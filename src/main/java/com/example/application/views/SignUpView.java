@@ -15,13 +15,15 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Set;
 import java.util.logging.Logger;
 
 @PageTitle("Sign Up Page")
-@Route(value = "sign-up", layout = MainLayout.class)
+@PermitAll
+@Route(value = "", layout = MainLayout.class)
 @AnonymousAllowed
 public class SignUpView extends VerticalLayout {
     Logger logger = Logger.getLogger(SignUpView.class.getName());
