@@ -2,11 +2,13 @@ package com.example.application.views;
 
 import com.example.application.data.model.Role;
 import com.example.application.data.model.User;
-import com.example.application.data.service.SignupService;
+import com.example.application.data.service.UserService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -15,19 +17,17 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Set;
 import java.util.logging.Logger;
 
 @PageTitle("Sign Up Page")
-@PermitAll
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "sign-up", layout = MainLayout.class)
 @AnonymousAllowed
 public class SignUpView extends VerticalLayout {
     Logger logger = Logger.getLogger(SignUpView.class.getName());
-    private SignupService signupService;
+    private UserService userService;
     @NotEmpty
     TextField firstName = new TextField("First Name");
     @NotEmpty
@@ -41,9 +41,9 @@ public class SignUpView extends VerticalLayout {
     @NotEmpty
     PasswordField confirmPassword = new PasswordField("Confirm password");
     Button signUpBtn = new Button("Sign Up");
-    public SignUpView(SignupService signupService) {
+    public SignUpView(UserService userService) {
 
-        this.signupService = signupService;
+        this.userService = userService;
         FormLayout formLayout = new FormLayout();
 
         formLayout.add(createNameLayout(),
@@ -69,7 +69,15 @@ public class SignUpView extends VerticalLayout {
             signup.setEmail(email.getValue());
             signup.setPassword(confirmPassword.getValue());
             signup.setRoles(Set.of(Role.USER));
-            signupService.saveSignUp(signup);
+            if(passwordCheck()){
+                User result = userService.saveSignUp(signup);
+                System.out.println("User saving return: " + result);
+                Notification notification = Notification.show("Амжилттай бүртгэгдлээ!");
+                notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            }else{
+                confirmPassword.setHelperText("4-өөс 12 тэмдэгтийн урттай байна.");
+            }
+
         });
 
         add(formLayout);
@@ -85,6 +93,11 @@ public class SignUpView extends VerticalLayout {
     private Component createUserNameLayout(){return userName;}
     private Component createMailLayout(){return email;}
     private Component createPasswordLayout(){
+        newPassword.setAllowedCharPattern("[A-Za-z0-9]");
+        newPassword.setMinLength(4);
+        newPassword.setMaxLength(12);
+        newPassword.setPattern("^(?=.*[0-9])(?=.*[a-zA-Z]).{8}.*$");
+        newPassword.setErrorMessage("Нууц үг шаардлага хангахгүй байна.");
         return new HorizontalLayout(newPassword, confirmPassword);
     }
     private  boolean passwordCheck(){

@@ -1,7 +1,6 @@
 package com.example.application.views;
 
 import com.example.application.security.AuthenticatedUser;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -31,16 +30,19 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
-        //login.setAction("login");
         login.setAction(RouteUtil.getRoutePath(VaadinService.getCurrent().getContext(), getClass()));
-        //login.setOpened(true);
-        add(new H1("Login"), login);
+
+        add(login);
     }
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent){
         if (authenticatedUser.get().isPresent()) {
             beforeEnterEvent.forwardTo("");
         }
+        // UserDetails empty logout
+//        if (authenticatedUser.getAutenticatedUser().isEmpty()) {
+//            authenticatedUser.logout();
+//        }
         login.setError(beforeEnterEvent.getLocation().getQueryParameters().getParameters().containsKey("error"));
     }
 }
