@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Set;
 
@@ -20,18 +21,24 @@ public class User{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable=false)
+    @NotEmpty
     private String firstName = "";
     @Column(nullable=false)
+    @NotEmpty
     private String lastName = "";
     @Column(nullable=false)
+    @NotEmpty
     private String username = "";
     @Column(nullable=false)
+    @NotEmpty
     private String email = "";
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(nullable=false)
+    @NotEmpty
     private Set<Role> roles;
     @Column(nullable=false)
+    @NotEmpty
     private String hashedPassword = "";
 
     public Long getId() {
