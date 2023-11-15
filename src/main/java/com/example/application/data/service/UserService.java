@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -32,6 +33,17 @@ public class UserService {
             return userRepository.save(signup);
         }
     }
+
+    public boolean checkEmail(String email){
+        System.out.println("UserService checkEmail(): " + email);
+        List<User> users = getAllUsers();
+        for(User user: users){
+            System.out.println("UserService checkEmail() -> for: " + user.getEmail());
+            if(user.getEmail().equalsIgnoreCase(email))
+                return true;
+        }
+        return false;
+    }
     public Optional<User> findUser(Long id){
         if(id == null){
             return null;
@@ -39,5 +51,7 @@ public class UserService {
             return userRepository.findById(id);
         }
     }
-
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
+    }
 }

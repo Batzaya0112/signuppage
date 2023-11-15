@@ -42,10 +42,12 @@ public class PersonFormView extends FormLayout {
     // Other fields omitted
     Binder<User> binder = new Binder<>(User.class);
 
-    public PersonFormView(UserService userService, AuthenticatedUser authenticatedUser, UserRepository userRepository) {
+    public PersonFormView(UserService userService,
+                          AuthenticatedUser authenticatedUser,
+                          UserRepository userRepository) {
         this.authenticatedUser = authenticatedUser;
-        this.userService = userService;
         this.userRepository = userRepository;
+        this.userService = userService;
         addClassName("person-form");
         add(
                 firstName,
