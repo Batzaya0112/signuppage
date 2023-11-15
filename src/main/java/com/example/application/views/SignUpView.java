@@ -4,13 +4,12 @@ import com.example.application.data.model.Role;
 import com.example.application.data.model.User;
 import com.example.application.data.repository.UserRepository;
 import com.example.application.data.service.UserService;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -45,22 +44,6 @@ public class SignUpView extends VerticalLayout {
                       UserRepository userRepository) {
         this.userRepository = userRepository;
         this.userService = userService;
-        FormLayout formLayout = new FormLayout();
-
-        formLayout.add(createNameLayout(),
-            createUserNameLayout(),
-            createMailLayout(),
-            createPasswordLayout(),
-            createButtonsLayout()
-        );
-
-        formLayout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("0", 1),
-                new FormLayout.ResponsiveStep("500px", 2)
-        );
-
-        formLayout.setColspan(createUserNameLayout(), 2);
-        formLayout.setColspan(createMailLayout(), 2);
 
         signUpBtn.addClickListener( event -> {
             User signup = new User();
@@ -69,44 +52,21 @@ public class SignUpView extends VerticalLayout {
                         signup = setForm(signup);
                         User result = userService.saveSignUp(signup);
                         if(result != null){
-                            Notification notification = Notification.show("Амжилттай бүртгэгдлээ!");
-                            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                            notificationShow("Амжилттай бүртгэгдлээ!", 1);
                             removeAll();
                             successView();
                         }
                     }else{
-                        Notification notification = Notification.show("Нууц үгээ дахин шалгана уу.");
-                        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                        notificationShow("Нууц үгээ дахин шалгана уу.", 2);
                     }
 
             }else{
-                Notification notification = Notification.show("Шаардлагын дагуу мэдээллээ оруулна уу.");
-                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                notificationShow("Шаардлагын дагуу мэдээллээ оруулна уу.", 2);
             }
         });
-
-        add(formLayout);
+        signUpFormView();
     }
 
-    private Button createButtonsLayout(){
-        signUpBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        return signUpBtn;
-    }
-    private Component createNameLayout(){
-        this.firstName.setPattern(this.personalNamePattern.toString());
-        this.lastName.setPattern(this.personalNamePattern.toString());
-        return new HorizontalLayout(this.firstName, this.lastName);
-    }
-    private Component createUserNameLayout(){
-        this.userName.setPattern(this.usernamePattern.toString());
-        return this.userName;
-    }
-    private Component createMailLayout(){return this.email;}
-    private Component createPasswordLayout(){
-        this.newPassword.setPattern(this.passwordPattern.toString());
-        this.confirmPassword.setPattern(this.passwordPattern.toString());
-        return new HorizontalLayout(this.newPassword, this.confirmPassword);
-    }
     private  boolean checkForm(){
         boolean valid = false;
         int count = 0;
@@ -169,7 +129,6 @@ public class SignUpView extends VerticalLayout {
             }else{
                 this.firstName.setInvalid(false);
             }
-
         });
         this.lastName.addValueChangeListener(event -> {
             if(this.lastName.isInvalid()){
@@ -253,6 +212,10 @@ public class SignUpView extends VerticalLayout {
 
         return valid;
     }
+    private boolean checkAddValueChangeListener(){
+        boolean valid = true;
+        return valid;
+    }
     private User setForm(User signup){
         signup.setFirstName(this.firstName.getValue());
         signup.setLastName(this.lastName.getValue());
@@ -261,6 +224,39 @@ public class SignUpView extends VerticalLayout {
         signup.setPassword(this.confirmPassword.getValue());
         signup.setRoles(Set.of(Role.USER));
         return signup;
+    }
+
+    private void signUpFormView(){
+        FormLayout formLayout = new FormLayout();
+        formLayout.add(
+                this.firstName,
+                this.lastName,
+                this.userName,
+                this.email,
+                this.newPassword,
+                this.confirmPassword
+        );
+        formLayout.setResponsiveSteps(
+                new FormLayout.ResponsiveStep("0", 1),
+                new FormLayout.ResponsiveStep("500px", 2)
+        );
+        formLayout.setColspan(this.userName, 2);
+        formLayout.setColspan(this.email, 2);
+        formLayout.getStyle().set("max-width", "75%");
+        formLayout.getStyle().set("width", "100%");
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout(formLayout);
+        horizontalLayout.setAlignItems(Alignment.CENTER);
+        horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        this.signUpBtn.setWidth("40%");
+        VerticalLayout verticalLayout = new VerticalLayout(horizontalLayout, this.signUpBtn);
+        verticalLayout.setAlignItems(Alignment.CENTER);
+        verticalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        verticalLayout.getStyle().set("height", "100vh");
+
+        add(verticalLayout);
     }
     private void successView(){
         VerticalLayout layout = new VerticalLayout();
@@ -274,5 +270,17 @@ public class SignUpView extends VerticalLayout {
         layout.getStyle().set("background-color", "#f0f0f0");
         layout.getStyle().set("padding", "20px");
         add(layout);
+    }
+    private void notificationShow(String message, int id ){
+        Notification notification = Notification.show(message);
+
+        switch (id){
+            case 1:
+                notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                break;
+            case 2:
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                break;
+        }
     }
 }
