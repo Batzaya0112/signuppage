@@ -52,7 +52,8 @@ public class MainLayout extends AppLayout {
             addToNavbar(header);
 
             addToDrawer(new VerticalLayout(
-                    new RouterLink("person-form", PersonFormView.class)
+                    new RouterLink("Person form", PersonFormView.class),
+                    new RouterLink("File Upload", FileUploadView.class)
             ));
         } else {
             addToDrawer(new VerticalLayout(
