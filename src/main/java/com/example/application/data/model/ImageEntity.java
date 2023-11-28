@@ -5,33 +5,39 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="image_entity")
 public class ImageEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable=false)
     @NotEmpty
-    private String nameFile;
+    private String fileName;
 
     @Column(nullable=false)
     @NotEmpty
-    private String diretoryFile;
+    private String uploadDirectory;
 
-    @Column(nullable=false)
-    @NotEmpty
-    private String uploadDate;
+    @Column(name = "upload_date", nullable = false)
+    private LocalDateTime uploadDate;
 
-    @Lob
-    @Column(name="image_data", columnDefinition = "bytea")
-    private byte[] imageData;
-
-    public void setImageData(byte[] imageData){ this.imageData = imageData;}
-    public byte[] getImageData(){return this.imageData;}
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public void setFileName(String fileName){this.fileName = fileName;}
+    public String getFileName(){return this.fileName;}
+    public void setUploadDirectory(String uploadDirectory){this.uploadDirectory = uploadDirectory;}
+    public String getUploadDirectory(){return this.uploadDirectory;}
+    public void setUploadDate(LocalDateTime uploadDate){this.uploadDate = uploadDate;}
+    public LocalDateTime getUploadDate(){return this.uploadDate;}
 }

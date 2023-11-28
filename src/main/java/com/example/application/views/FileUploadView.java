@@ -5,7 +5,6 @@ import com.example.application.data.repository.ImageEntityRepository;
 import com.example.application.data.service.FileService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -13,14 +12,13 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @PermitAll
@@ -31,7 +29,12 @@ public class FileUploadView extends VerticalLayout {
     private final ImageEntityRepository imageEntityRepository;
     @Autowired
     private final FileService fileService;
+
+    private String fileName;
+    private String uploadDirectory;
+    private LocalDateTime uploadDate;
     Button saveButton = new Button("Save");
+
 
     public FileUploadView(ImageEntityRepository imageEntityRepository,
                           FileService fileService) {
@@ -59,12 +62,12 @@ public class FileUploadView extends VerticalLayout {
         add(layout);
     }
 
-    private void showImage(ImageEntity imageEntity) {
-        Image image = new Image(new StreamResource("image.jpg",
-                () -> new ByteArrayInputStream(imageEntity.getImageData())), "Uploaded Image");
-        image.getStyle().set("max-width", "300px");
-        add(image);
-    }
+//    private void showImage(ImageEntity imageEntity) {
+//        Image image = new Image(new StreamResource("image.jpg",
+//                () -> new ByteArrayInputStream(imageEntity.getImageData())), "Uploaded Image");
+//        image.getStyle().set("max-width", "300px");
+//        add(image);
+//    }
     private void saveFile(MultiFileMemoryBuffer buffer){
         if(!buffer.getFiles().isEmpty()){
             try{
@@ -74,13 +77,13 @@ public class FileUploadView extends VerticalLayout {
                 saveToDatabase(filePathString, fileName);
                 Notification.show("File saved successfully");
 
-                ImageEntity imageEntity = new ImageEntity();
-                try {
-                    imageEntity.setImageData(buffer.getInputStream(fileName).readAllBytes());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                showImage(imageEntity);
+//                ImageEntity imageEntity = new ImageEntity();
+//                try {
+//                    imageEntity.setImageData(buffer.getInputStream(fileName).readAllBytes());
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                showImage(imageEntity);
 
             }catch(IOException e){
                 Notification.show("Error saving file: " + e.getMessage());
@@ -88,8 +91,6 @@ public class FileUploadView extends VerticalLayout {
         }else{
             Notification.show("Файл оруулаагүй байна.");
         }
-
-
     }
     private Path saveFileToPath(byte[] content, String fileName) throws IOException{
         String uploadDirectory = "/Users/batzaya/Documents/Hicheel/Java/VaadinTutorial/src/main/resources/META-INF/resources/images/";
@@ -99,7 +100,10 @@ public class FileUploadView extends VerticalLayout {
         return targetPath;
     }
     private void saveToDatabase(String filePath, String fileName){
-        System.out.println("File path: " + filePath);
-        System.out.println("File name: " + fileName);
+        ImageEntity imageEntity = new ImageEntity();
+        imageEntity.setUploadDirectory(filePath);
+        imageEntity.setFileName(fileName);
+        imageEntity.setUploadDate(LocalDateTime.now());
+        fileService.saveFileToDatabase(imageEntity);
     }
 }

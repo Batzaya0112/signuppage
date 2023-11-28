@@ -10,10 +10,13 @@ public class FileService {
     @Autowired
     private  final ImageEntityRepository imageEntityRepository;
 
+
     public FileService(ImageEntityRepository imageEntityRepository) {
         this.imageEntityRepository = imageEntityRepository;
     }
-    public ImageEntity saveFile(ImageEntity img){
-        return imageEntityRepository.save(img);
+    public void saveFileToDatabase(ImageEntity imageEntity){
+        System.out.println("saveToDatabase =====>" + imageEntity.getUploadDate().toString());
+            imageEntityRepository.save(imageEntity);
+
     }
 }
