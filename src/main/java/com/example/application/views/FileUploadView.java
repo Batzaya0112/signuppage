@@ -1,7 +1,6 @@
 package com.example.application.views;
 
 import com.example.application.data.model.ImageEntity;
-import com.example.application.data.repository.ImageEntityRepository;
 import com.example.application.data.service.FileService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -26,19 +25,10 @@ import java.util.UUID;
 @Route(value = "File Upload", layout = MainLayout.class)
 public class FileUploadView extends VerticalLayout {
     @Autowired
-    private final ImageEntityRepository imageEntityRepository;
-    @Autowired
     private final FileService fileService;
-
-    private String fileName;
-    private String uploadDirectory;
-    private LocalDateTime uploadDate;
     Button saveButton = new Button("Save");
 
-
-    public FileUploadView(ImageEntityRepository imageEntityRepository,
-                          FileService fileService) {
-        this.imageEntityRepository = imageEntityRepository;
+    public FileUploadView(FileService fileService) {
         this.fileService = fileService;
 
         MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
@@ -47,7 +37,6 @@ public class FileUploadView extends VerticalLayout {
         upload.setDropAllowed(true);
         upload.setAcceptedFileTypes("image/jpeg", "image/png");
         upload.setMaxFiles(1);
-
 
         Span dropEnabledLabel = new Span("File Upload");
         upload.getStyle().set("font-weight", "600");
@@ -62,12 +51,6 @@ public class FileUploadView extends VerticalLayout {
         add(layout);
     }
 
-//    private void showImage(ImageEntity imageEntity) {
-//        Image image = new Image(new StreamResource("image.jpg",
-//                () -> new ByteArrayInputStream(imageEntity.getImageData())), "Uploaded Image");
-//        image.getStyle().set("max-width", "300px");
-//        add(image);
-//    }
     private void saveFile(MultiFileMemoryBuffer buffer){
         if(!buffer.getFiles().isEmpty()){
             try{
@@ -76,15 +59,6 @@ public class FileUploadView extends VerticalLayout {
                 String filePathString = filePath.toString();
                 saveToDatabase(filePathString, fileName);
                 Notification.show("File saved successfully");
-
-//                ImageEntity imageEntity = new ImageEntity();
-//                try {
-//                    imageEntity.setImageData(buffer.getInputStream(fileName).readAllBytes());
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-//                showImage(imageEntity);
-
             }catch(IOException e){
                 Notification.show("Error saving file: " + e.getMessage());
             }
@@ -97,6 +71,7 @@ public class FileUploadView extends VerticalLayout {
         String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
         Path targetPath = Path.of(uploadDirectory, uniqueFileName);
         Files.write(targetPath, content);
+        System.out.println("target path =======> " + targetPath.toString());
         return targetPath;
     }
     private void saveToDatabase(String filePath, String fileName){
