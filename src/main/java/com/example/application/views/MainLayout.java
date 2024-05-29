@@ -24,14 +24,14 @@ public class MainLayout extends AppLayout {
     @Autowired
     private AuthenticatedUser authenticatedUser;
 
-    public MainLayout(AuthenticatedUser authenticatedUser){
+    public MainLayout(AuthenticatedUser authenticatedUser) {
         this.authenticatedUser = authenticatedUser;
         createHeader();
     }
 
     private void createHeader() {
         Optional<UserDetails> u = authenticatedUser.getAutenticatedUser();
-        if(u.isPresent()){
+        if (u.isPresent()) {
             H1 logo = new H1("Main Layout");
             logo.addClassNames(
                     LumoUtility.FontSize.LARGE,
@@ -53,13 +53,12 @@ public class MainLayout extends AppLayout {
 
             addToDrawer(new VerticalLayout(
                     new RouterLink("Person form", PersonFormView.class),
-                    new RouterLink("File Upload", FileUploadView.class)
-            ));
+                    new RouterLink("File Upload", FileUploadView.class),
+                    new RouterLink("Files List", FilesListView.class)));
         } else {
             addToDrawer(new VerticalLayout(
                     new RouterLink("Login", LoginView.class),
-                    new RouterLink("Sign up", SignUpView.class)
-            ));
+                    new RouterLink("Sign up", SignUpView.class)));
         }
     }
 }

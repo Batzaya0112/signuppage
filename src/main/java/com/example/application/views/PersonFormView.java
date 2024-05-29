@@ -43,8 +43,8 @@ public class PersonFormView extends FormLayout {
     Button close = new Button("Cancel");
 
     public PersonFormView(UserService userService,
-                          AuthenticatedUser authenticatedUser,
-                          UserRepository userRepository) {
+            AuthenticatedUser authenticatedUser,
+            UserRepository userRepository) {
         this.authenticatedUser = authenticatedUser;
         this.userRepository = userRepository;
         this.userService = userService;
@@ -56,7 +56,7 @@ public class PersonFormView extends FormLayout {
         initBinder();
     }
 
-    private void initBinder(){
+    private void initBinder() {
         Optional<UserDetails> u = authenticatedUser.getAutenticatedUser();
         System.out.println("Person username: " + u.get().getUsername());
         User userInfo = userRepository.findByUsername(u.get().getUsername());
@@ -66,12 +66,13 @@ public class PersonFormView extends FormLayout {
         this.userName.setValue(userInfo.getUserName());
         this.email.setValue(userInfo.getEmail());
     }
-    private void clickBtnListener(){
+
+    private void clickBtnListener() {
         close.addClickListener(e -> {
-           clickBtnName = close.getText().toString();
-           removeAll();
-           textFiedSetReadOnly(true);
-           formView();
+            clickBtnName = close.getText().toString();
+            removeAll();
+            textFiedSetReadOnly(true);
+            formView();
         });
         edit.addClickListener(e -> {
             clickBtnName = edit.getText().toString();
@@ -80,40 +81,41 @@ public class PersonFormView extends FormLayout {
             formView();
         });
     }
-    private void textFiedSetReadOnly(boolean val){
+
+    private void textFiedSetReadOnly(boolean val) {
         firstName.setReadOnly(val);
         lastName.setReadOnly(val);
         userName.setReadOnly(val);
         email.setReadOnly(val);
     }
+
     private Component createButtonsLayout(String btnName) {
 
-        if(edit.getText().toString().equals(btnName)){
+        if (edit.getText().toString().equals(btnName)) {
             save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             save.addClickShortcut(Key.ENTER);
             close.addClickShortcut(Key.ESCAPE);
             return new HorizontalLayout(save, close);
-        }else if(close.getText().toString().equals(btnName)){
+        } else if (close.getText().toString().equals(btnName)) {
             edit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             return new HorizontalLayout(edit);
-        }else {
-           return new HorizontalLayout();
+        } else {
+            return new HorizontalLayout();
         }
     }
-    private void formView(){
+
+    private void formView() {
         addClassName("person-form");
         FormLayout formLayout = new FormLayout();
         formLayout.add(
                 this.firstName,
                 this.lastName,
                 this.userName,
-                this.email
-        );
+                this.email);
         formLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
-                new FormLayout.ResponsiveStep("600px", 2)
-        );
+                new FormLayout.ResponsiveStep("600px", 2));
 
         formLayout.getStyle().set("max-width", "75%");
         formLayout.getStyle().set("width", "100%");
@@ -128,5 +130,5 @@ public class PersonFormView extends FormLayout {
 
         add(verticalLayout);
     }
-}
 
+}
